@@ -13,7 +13,7 @@ export default {
 console.log(`Initializing bot with key${WA.room.hashParameters.key}`);
         async function handleChatMessage(message: string, userUuid: string) {
             const url = 'https://api-production-db6f.up.railway.app/v1/chat-messages';
-            const apiKey = `Bearer${WA.room.hashParameters.key}`
+            const apiKey = `Bearer ${WA.room.hashParameters.key}`
 
             const requestData = {
                 inputs: {},
