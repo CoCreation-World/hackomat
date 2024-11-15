@@ -5,7 +5,7 @@ const S = {
     console.log(`Initializing bot with key${WA.room.hashParameters.key}`);
     async function w(e, o) {
       var g;
-      const t = "https://api-production-db6f.up.railway.app/v1/chat-messages", m = `Bearer${WA.room.hashParameters.key}`, u = {
+      const t = "https://api-production-db6f.up.railway.app/v1/chat-messages", m = `Bearer ${WA.room.hashParameters.key}`, u = {
         inputs: {},
         query: e,
         response_mode: "streaming",
