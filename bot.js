@@ -1,61 +1,61 @@
-const P = {
-  run: async (d) => {
+const S = {
+  run: async (b) => {
     await WA.onInit(), await WA.players.configureTracking({ players: !0 });
-    let n, c = !1, l = {};
-    async function u(e, o) {
-      var h;
-      const y = "https://api-production-db6f.up.railway.app/v1/chat-messages", m = "app-w0Ps4KAkUptJAYYY7DbleqQc", f = {
+    let p, y = !1, f = {};
+    async function w(e, o) {
+      var g;
+      const t = "https://api-production-db6f.up.railway.app/v1/chat-messages", m = "Bearer YOUR_API_KEY_HERE", u = {
         inputs: {},
         query: e,
         response_mode: "streaming",
-        conversation_id: l[o] || "",
+        conversation_id: f[o] || "",
         // Use existing conversation_id or blank
         user: o,
         files: []
       };
       try {
-        console.log(`Handling chat message for bot: ${n}, message: ${e}`), WA.chat.startTyping({ scope: "bubble" });
-        const a = await fetch(y, {
+        console.log(`Handling chat message for bot: ${p}, message: ${e}`), WA.chat.startTyping({ scope: "bubble" });
+        const s = await fetch(t, {
           method: "POST",
           headers: {
             Authorization: m,
             "Content-Type": "application/json"
           },
-          body: JSON.stringify(f)
+          body: JSON.stringify(u)
         });
-        if (!a.ok)
-          throw new Error(`Failed to handle chat message: ${a.statusText}`);
-        const i = (h = a.body) == null ? void 0 : h.getReader(), b = new TextDecoder();
-        let r = "";
+        if (!s.ok)
+          throw new Error(`Failed to handle chat message: ${s.statusText}`);
+        const r = (g = s.body) == null ? void 0 : g.getReader(), a = new TextDecoder();
+        let i = "";
         for (; ; ) {
-          const { done: w, value: A } = await (i == null ? void 0 : i.read());
-          if (w) break;
-          const W = b.decode(A, { stream: !0 }).split(`
+          const { done: c, value: d } = await (r == null ? void 0 : r.read());
+          if (c) break;
+          const $ = a.decode(d, { stream: !0 }).split(`
 `);
-          for (const s of W)
-            if (s.trim()) {
-              const k = s.startsWith("data: ") ? s.slice(6) : s;
+          for (const h of $)
+            if (h.trim()) {
+              const E = h.startsWith("data: ") ? h.slice(6) : h;
               try {
-                const t = JSON.parse(k);
-                t.answer && (r += t.answer), t.conversation_id && (l[o] = t.conversation_id);
-              } catch (t) {
-                console.error("Error parsing chunk:", t);
+                const l = JSON.parse(E);
+                l.answer && (i += l.answer), l.conversation_id && (f[o] = l.conversation_id);
+              } catch (l) {
+                console.error("Error parsing chunk:", l);
               }
             }
         }
-        console.log("Custom AI text response:", r.trim()), WA.chat.sendChatMessage(r.trim(), { scope: "bubble" }), WA.chat.stopTyping({ scope: "bubble" }), console.log("Chat message handled successfully.");
-      } catch (a) {
-        console.error("Failed to handle chat message:", a);
+        console.log("Custom AI text response:", i.trim()), WA.chat.sendChatMessage(i.trim(), { scope: "bubble" }), WA.chat.stopTyping({ scope: "bubble" }), console.log("Chat message handled successfully.");
+      } catch (s) {
+        console.error("Failed to handle chat message:", s);
       }
     }
-    async function g() {
+    async function A() {
       try {
-        console.log("Initializing bot with metadata:", d), n = WA.room.hashParameters.model || "kos", console.log(n + " is ready!"), console.log("Bot initialized successfully.");
+        console.log("Initializing bot with metadata:", b), p = WA.room.hashParameters.model || "kos", console.log(p + " is ready!"), console.log("Bot initialized successfully.");
       } catch (e) {
         console.error("Failed to initialize bot:", e);
       }
     }
-    async function p(e) {
+    async function W(e) {
       try {
         console.log(`User ${e.name} with UUID ${e.uuid} joined the proximity meeting.`), console.log("Participant join handled successfully.");
       } catch (o) {
@@ -63,23 +63,85 @@ const P = {
       }
     }
     try {
-      await g(), WA.player.proximityMeeting.onJoin().subscribe(async (e) => {
-        await p(e);
-      }), c || (WA.chat.onChatMessage(
+      await A(), WA.player.proximityMeeting.onJoin().subscribe(async (e) => {
+        await W(e);
+      }), y || (WA.chat.onChatMessage(
         async (e, o) => {
           if (!o.author) {
             console.log("Received message with no author, ignoring.");
             return;
           }
-          console.log(`Received message from ${o.author.name}: ${e}`), await u(e, o.author.uuid);
+          console.log(`Received message from ${o.author.name}: ${e}`), await w(e, o.author.uuid);
         },
         { scope: "bubble" }
-      ), c = !0), console.log("Bot initialized!");
+      ), y = !0), console.log("Bot initialized!");
     } catch (e) {
       console.error("Failed to run bot:", e);
+    }
+    WA.onInit().then(() => {
+      console.log("Initializing grouping..."), WA.state.onVariableChange("grouping").subscribe(() => {
+        U();
+      });
+    }).catch((e) => console.error("Error during WA.onInit:", e));
+    async function U() {
+      try {
+        const e = Number(WA.state.grouping);
+        console.log("Current grouping state:", e), await C(e);
+      } catch (e) {
+        console.error("Error in updateGrouping:", e);
+      }
+    }
+    async function C(e) {
+      e === 1 ? (WA.event.broadcast("ping", "start"), await I()) : e === 0 ? (WA.event.broadcast("ping", "stop"), n = [], console.log("Cleared UUIDs array"), ["Purple", "Blue", "Red", "Green", "Yellow", "Orange"].forEach((t) => {
+        WA.state[t] = [], console.log(`Cleared group ${t}`);
+      })) : console.warn("Unknown grouping state:", e);
+    }
+    let n = [];
+    async function I() {
+      n = [];
+      const e = WA.event.on("pong").subscribe((o) => {
+        const t = o.data;
+        n.includes(t) || n.push(t);
+      });
+      try {
+        await new Promise((o) => {
+          setTimeout(() => {
+            o();
+          }, 3e3);
+        });
+      } finally {
+        e.unsubscribe(), P();
+      }
+    }
+    async function P() {
+      const e = ["Purple", "Blue", "Red", "Green", "Yellow", "Orange"], o = {
+        Purple: [],
+        Blue: [],
+        Red: [],
+        Green: [],
+        Yellow: [],
+        Orange: []
+      }, t = WA.player.uuid;
+      console.log("My UUID:", t), n = n.filter((a) => a !== t), n.sort(() => Math.random() - 0.5);
+      const u = Math.min(e.length, Math.floor(n.length / 2)), g = Math.floor(n.length / u), s = n.length % u;
+      let r = 0;
+      e.slice(0, u).forEach((a, i) => {
+        const c = i < s ? 1 : 0, d = g + c;
+        o[a] = n.slice(r, r + d), r += d;
+      }), console.log("Formed groups:", o), Object.keys(o).forEach((a) => {
+        o[a].forEach((c) => {
+          console.log(`UUID ${c} is in group ${a}`), WA.event.broadcast(c, a);
+        });
+      }), G();
+    }
+    function G() {
+      ["Blue", "Green", "Orange", "Red", "Yellow", "Purple"].forEach((o) => {
+        const t = Math.floor(1e3 + Math.random() * 9e3).toString();
+        WA.state[`code${o}`] = t, console.log(`Generated code for ${o}: ${t}`);
+      });
     }
   }
 };
 export {
-  P as default
+  S as default
 };
