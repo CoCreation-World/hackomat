@@ -155,6 +155,7 @@ async function processGroupingStateChange(state: number) {
     if (state === 1) {
         // If grouping state is 1, send "ping" event with value "start" and start collecting UUIDs
         WA.event.broadcast('ping', 'start');
+        console.log('ping start');
         await startUUIDCollection();
     } else if (state === 0) {
         // If grouping state is 0, send "ping" event with value "stop"
