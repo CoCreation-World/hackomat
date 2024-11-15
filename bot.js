@@ -93,7 +93,7 @@ const S = {
       }
     }
     async function C(e) {
-      e === 1 ? (WA.event.broadcast("ping", "start"), await I()) : e === 0 ? (WA.event.broadcast("ping", "stop"), n = [], console.log("Cleared UUIDs array"), ["Purple", "Blue", "Red", "Green", "Yellow", "Orange"].forEach((t) => {
+      e === 1 ? (WA.event.broadcast("ping", "start"), console.log("ping start"), await I()) : e === 0 ? (WA.event.broadcast("ping", "stop"), n = [], console.log("Cleared UUIDs array"), ["Purple", "Blue", "Red", "Green", "Yellow", "Orange"].forEach((t) => {
         WA.state[t] = [], console.log(`Cleared group ${t}`);
       })) : console.warn("Unknown grouping state:", e);
     }
