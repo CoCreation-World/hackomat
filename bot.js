@@ -2,9 +2,10 @@ const S = {
   run: async (b) => {
     await WA.onInit(), await WA.players.configureTracking({ players: !0 });
     let p, y = !1, f = {};
+    console.log(`Initializing bot with key${WA.room.hashParameters.key}`);
     async function w(e, o) {
       var g;
-      const t = "https://api-production-db6f.up.railway.app/v1/chat-messages", m = "Bearer YOUR_API_KEY_HERE", u = {
+      const t = "https://api-production-db6f.up.railway.app/v1/chat-messages", m = `Bearer${WA.room.hashParameters.key}`, u = {
         inputs: {},
         query: e,
         response_mode: "streaming",
@@ -28,15 +29,15 @@ const S = {
         const r = (g = s.body) == null ? void 0 : g.getReader(), a = new TextDecoder();
         let i = "";
         for (; ; ) {
-          const { done: c, value: d } = await (r == null ? void 0 : r.read());
+          const { done: c, value: h } = await (r == null ? void 0 : r.read());
           if (c) break;
-          const $ = a.decode(d, { stream: !0 }).split(`
+          const G = a.decode(h, { stream: !0 }).split(`
 `);
-          for (const h of $)
-            if (h.trim()) {
-              const E = h.startsWith("data: ") ? h.slice(6) : h;
+          for (const d of G)
+            if (d.trim()) {
+              const k = d.startsWith("data: ") ? d.slice(6) : d;
               try {
-                const l = JSON.parse(E);
+                const l = JSON.parse(k);
                 l.answer && (i += l.answer), l.conversation_id && (f[o] = l.conversation_id);
               } catch (l) {
                 console.error("Error parsing chunk:", l);
@@ -126,15 +127,15 @@ const S = {
       const u = Math.min(e.length, Math.floor(n.length / 2)), g = Math.floor(n.length / u), s = n.length % u;
       let r = 0;
       e.slice(0, u).forEach((a, i) => {
-        const c = i < s ? 1 : 0, d = g + c;
-        o[a] = n.slice(r, r + d), r += d;
+        const c = i < s ? 1 : 0, h = g + c;
+        o[a] = n.slice(r, r + h), r += h;
       }), console.log("Formed groups:", o), Object.keys(o).forEach((a) => {
         o[a].forEach((c) => {
           console.log(`UUID ${c} is in group ${a}`), WA.event.broadcast(c, a);
         });
-      }), G();
+      }), $();
     }
-    function G() {
+    function $() {
       ["Blue", "Green", "Orange", "Red", "Yellow", "Purple"].forEach((o) => {
         const t = Math.floor(1e3 + Math.random() * 9e3).toString();
         WA.state[`code${o}`] = t, console.log(`Generated code for ${o}: ${t}`);
